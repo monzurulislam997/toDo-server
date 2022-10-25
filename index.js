@@ -1,15 +1,16 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const app = express()
 const port = 5000;
 const cors = require('cors')
+require('dotenv').config()
 app.use(express.json())
 app.use(cors())
-// PcuNcNasIKJO7jRg
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2bjc4l4.mongodb.net/?retryWrites=true&w=majority`;
-// const uri = "mongodb+srv://toDoApp:PcuNcNasIKJO7jRg@cluster0.2bjc4l4.mongodb.net/?retryWrites=true&w=majority";
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
@@ -21,7 +22,7 @@ const run = async () => {
 
         app.post('/addItem', async (req, res) => {
             const item = req.body;
-            console.log(item);
+           
             const result = await itemsCollection.insertOne(item)
 
             res.send(result)
@@ -32,8 +33,15 @@ const run = async () => {
             const result = await itemsCollection.find(query).toArray()
             res.send(result)
         })
+        //delete item
+        app.delete('/delete/:id', async(req,res)=>{
 
-
+              const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+             const deleteItem= await itemsCollection.deleteOne(query) 
+             res.send(deleteItem)  
+              
+        })
 
 
     }
