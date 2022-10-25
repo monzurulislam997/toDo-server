@@ -22,7 +22,7 @@ const run = async () => {
 
         app.post('/addItem', async (req, res) => {
             const item = req.body;
-           
+
             const result = await itemsCollection.insertOne(item)
 
             res.send(result)
@@ -34,15 +34,32 @@ const run = async () => {
             res.send(result)
         })
         //delete item
-        app.delete('/delete/:id', async(req,res)=>{
+        app.delete('/delete/:id', async (req, res) => {
 
-              const id = req.params.id;
-            const query = {_id:ObjectId(id)}
-             const deleteItem= await itemsCollection.deleteOne(query) 
-             res.send(deleteItem)  
-              
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const deleteItem = await itemsCollection.deleteOne(query)
+            res.send(deleteItem)
+
         })
 
+        //update item
+        app.put('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const info = req.body;
+            console.log(info);
+            const options = { upsert: true }
+            const updateDoc = {
+                $set:{ 
+                    name:info?.updateItem
+                }
+            }
+
+            const result = await itemsCollection.updateOne(query, updateDoc, options)
+            res.send(result)
+        })
 
     }
 
